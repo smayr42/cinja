@@ -386,7 +386,7 @@ static nptr<StmtListNode> parse_rstatement_list(tk_iterator &it,
 
 nptr<> parse_template(tk_iterator &it)
 {
-    auto root = make_node<ProgramNode>();
+    auto root = make_node<TemplateNode>();
     root->body = parse_rstatement_list(it, root->macros);
     match(it, tk_types::EOI);
     return std::move(root);

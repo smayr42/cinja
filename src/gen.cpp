@@ -140,7 +140,7 @@ Node::ostr &print_macro_proto(Node::ostr &o, const nptr<MacroNode> &m, unsigned 
     return o;
 }
 
-Node::ostr &ProgramNode::print(ostr &o, set &fsym, mset &bsym, unsigned lvl) const
+Node::ostr &TemplateNode::print(ostr &o, set &fsym, mset &bsym, unsigned lvl) const
 {
     o << "#include <iostream>\n"
       << "#include <string>\n\n"

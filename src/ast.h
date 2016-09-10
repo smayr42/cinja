@@ -289,13 +289,13 @@ class MacroNode : public Node
 };
 
 /* root node of the parsed template */
-class ProgramNode : public Node
+class TemplateNode : public Node
 {
   public:
     nptr<StmtListNode> body;
     std::vector<nptr<MacroNode>> macros;
 
-    ProgramNode() = default;
+    TemplateNode() = default;
     virtual void validate() const override;
     virtual ostr &print(ostr &o, set &fsym, mset &bsym, unsigned lvl = 0) const override;
 };

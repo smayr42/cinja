@@ -217,7 +217,7 @@ void CallNode::validate() const
         value->validate();
 }
 
-void ProgramNode::validate() const
+void TemplateNode::validate() const
 {
     for (const auto &macro : macros)
         macro->validate();
