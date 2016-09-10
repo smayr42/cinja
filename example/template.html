@@ -1,14 +1,34 @@
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<title>Example</title>
+<style type="text/css">
+    ol {
+        list-style-type: none;
+    }
 
+    li {
+        margin: 10px 0;
+    }
+
+    button {
+        margin: 3px 0;
+    }
+
+    p {
+        margin: 2px 0;
+    }
+</style>
 </head>
+
 <body>
 
 {% macro fact(n) %}
     {% if n == 1 %}
         <span>{{ n }}</span>
     {% else %}
-        <span>{{ n }} * {{ fact (n - 1) }}</span>
+        <span>{{ n }} ⋅ {{ fact (n - 1) }}</span>
     {% endif %}
 {% endmacro %}
 
@@ -26,55 +46,42 @@
     {% endif %}
 
     {% for user in users if user.active == active %}
-
-        <li style="margin: 10px 0;">
-            {{ user.firstname }} {{ user.lastname }} <br>
-            <button style="margin: 3px 0" type="submit" value="{{ user.id }}" name="{{ label }}"> {{ label }} </button>
+        <li>
+            <span>{{ user.firstname }} {{ user.lastname }}</span>
+            <button type="submit" value="{{ user.id }}" name="{{ label }}"> {{ label }} </button>
         </li>
-
     {% endfor %}
 
     </ol>
 {% endmacro %}
 
-
-<form>
+<h3>Example</h3>
+<form action="">
     {{ input("a", "", "text") }}
     {{ input("b", "", "text") }}
     {{ input("c", "Ok", "submit") }}
 </form>
 
-
-<ol style="list-style-type: none;">
+<ol>
     {% for entry in history %}
         {% set a = entry.first %}
         {% set b = entry.second %}
 
-        <li style="margin: 10px 0;">
-            {% if a*b > 0 %}
-                <span style="color: green;">
-            {% else %}
-                <span style="color: red;">
-            {% endif %}
-
-            {{ a }} * {{ b }} = {{ a*b }}
-
-            </span>
-            <br/>
-            {{ a }}² + {{ b }}² = {{ a*a + b*b }}
-            <br/>
-            {{ fact(a) }}
+        <li>
+            <p>{{ a }} ⋅ {{ b }} = {{ a*b }}</p>
+            <p>{{ a }}² + {{ b }}² = {{ a*a + b*b }}</p>
+            <p>{{ fact(a) }}</p>
         </li>
-    
+
     {% endfor %}
 </ol>
 
-<form>
-<h3>Active Users</h3>
-{{ print_users(users, true) }}
+<form action="">
+    <h3>Active Users</h3>
+    {{ print_users(users, true) }}
 
-<h3>Inactive Users</h3>
-{{ print_users(users, false) }}
+    <h3>Inactive Users</h3>
+    {{ print_users(users, false) }}
 </form>
 
 </body>
