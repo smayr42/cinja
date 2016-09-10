@@ -1,0 +1,9 @@
+* keep track of columns while parsing/lexing
+* proper validation and typechecking
+* proper symboltable
+* better error messages
+* more efficient lexing
+* more principled code generation
+* escaping / "safe strings"
+* extend compatibility with Jinja
+
