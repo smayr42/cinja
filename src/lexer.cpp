@@ -59,8 +59,9 @@ static void tokenize(const std::string &string, tk_vec &tokens, const tk_type_ve
     }
 }
 
-bool tokenize_template(const std::string &content, tk_vec &tokens)
+tk_vec tokenize_template(const std::string &content)
 {
+    tk_vec tokens;
     std::vector<tk> blocks;
     tokenize(content, blocks, BLOCK_TOKENS);
 
@@ -71,9 +72,14 @@ bool tokenize_template(const std::string &content, tk_vec &tokens)
             tokenize(block.value(), tokens, CODE_TOKENS, CODE_DELIMITER, block.start_line());
         else if (block.type() == tk_types::VAR_BLOCK)
             tokenize(block.value(), tokens, VAR_TOKENS, VAR_DELIMITER, block.start_line());
-        else
-            return false;
+        else {
+            std::stringstream s;
+            s << "invalid token " << block.type()->name() << " (" << block.value() << ") on line "
+              << std::to_string(block.start_line() + 1);
+
+            throw std::runtime_error(s.str());
+        }
     }
 
-    return true;
+    return tokens;
 }

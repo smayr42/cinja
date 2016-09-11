@@ -4,9 +4,9 @@
 #include <set>
 #include <sstream>
 
-template <typename T> static void insert_sym(T &syms, std::string sym) { syms.insert(sym); }
+template <typename T> static void insert_sym(T &syms, const std::string &sym) { syms.insert(sym); }
 
-template <typename T> static void erase_sym(T &syms, std::string sym)
+template <typename T> static void erase_sym(T &syms, const std::string &sym)
 {
     const auto it(syms.find(sym));
 
@@ -14,7 +14,7 @@ template <typename T> static void erase_sym(T &syms, std::string sym)
         syms.erase(it);
 }
 
-template <typename T> static bool contains_sym(T &syms, std::string sym)
+template <typename T> static bool contains_sym(const T &syms, const std::string &sym)
 {
     return (syms.find(sym) != syms.end());
 }
@@ -175,12 +175,12 @@ Node::ostr &TemplateNode::print(ostr &o, set &fsym, mset &bsym, unsigned lvl) co
     std::ostringstream body;
     this->body->print(body, fsym, bsym, lvl + 1);
 
-    o << "template<typename OS, ";
-    join(o, fsym, ", ", [](auto &o, auto &v, auto i) { o << "typename N" << i; });
+    o << "template<typename O, ";
+    join(o, fsym, ", ", [](auto &o, auto &v, auto i) { o << "typename T" << i; });
     o << ">\n";
 
-    o << "void render_template(OS &o, ";
-    join(o, fsym, ", ", [](auto &o, auto &v, auto i) { o << "N" << i << " " << v; });
+    o << "void render_template(O &o, ";
+    join(o, fsym, ", ", [](auto &o, auto &v, auto i) { o << "T" << i << " " << v; });
     o << ") {\n";
 
     o << body.str();

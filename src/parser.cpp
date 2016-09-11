@@ -6,24 +6,20 @@
 static std::string symbol_prefix("vsym");
 static std::string macro_namespace("macros");
 
-const char *ParseException::what() const noexcept
+ParseException::ParseException(const tk &token, const tk_type_vec &expected)
 {
-    if (!what_.empty())
-        return what_.c_str();
-
     std::stringstream s;
-    s << "unexpected token '" << token_.value() << "' (" << token_.type()->name() << ") on line "
-      << (token_.start_line() + 1);
-    if (expected_.size() == 1) {
-        s << ", expected " << expected_[0]->name();
-    } else if (expected_.size() > 1) {
-        s << ", expected one of " << expected_[0]->name();
-        for (auto it = expected_.begin() + 1, end = expected_.end(); it != end; ++it)
+    s << "unexpected token '" << token.value() << "' (" << token.type()->name() << ") on line "
+      << (token.start_line() + 1);
+    if (expected.size() == 1) {
+        s << ", expected " << expected[0]->name();
+    } else if (expected.size() > 1) {
+        s << ", expected one of " << expected[0]->name();
+        for (auto it = expected.begin() + 1, end = expected.end(); it != end; ++it)
             s << ", " << (*it)->name();
     }
 
     what_ = s.str();
-    return what_.c_str();
 }
 
 enum class Associativity { LEFT, RIGHT };

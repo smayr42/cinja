@@ -2,7 +2,7 @@
 #include "token.h"
 #include <iterator>
 
-bool tokenize_template(const std::string &content, tk_vec &tokens);
+tk_vec tokenize_template(const std::string &content);
 
 class tk_iterator : public std::iterator<std::forward_iterator_tag, const tk>
 {

@@ -11,7 +11,24 @@ static std::string demangle(const char *name)
     return (status == 0) ? res.get() : name;
 }
 
-/* Definition of dummy classes that are used for typechecking */
+InvalidTypeException::InvalidTypeException(const ExprNode &node, const std::type_index &type)
+{
+    std::stringstream s;
+    s << "expression '";
+    node.print(s) << "' on";
+
+    if (node.begin_line() != node.end_line())
+        s << " lines " << node.begin_line() + 1 << "-" << node.end_line() + 1;
+    else
+        s << " line " << node.begin_line() + 1;
+
+    s << " has type '" << demangle(node.type().name()) << "', but expected type '"
+      << demangle(type.name()) << "'";
+
+    what_ = s.str();
+}
+
+/* definition of dummy classes that are used for typechecking */
 class IdentifierT
 {
     IdentifierT() = delete;
@@ -30,33 +47,12 @@ class List
 };
 static const std::type_index ListType = typeid(List);
 
-const char *InvalidTypeException::what() const noexcept
-{
-    if (!what_.empty())
-        return what_.c_str();
-
-    std::stringstream s;
-    s << "expression '";
-    node_->print(s) << "' on";
-
-    if (node_->begin_line() != node_->end_line())
-        s << " lines " << node_->begin_line() + 1 << "-" << node_->end_line() + 1;
-    else
-        s << " line " << node_->begin_line() + 1;
-
-    s << " has type '" << demangle(node_->type().name()) << "', but expected type '"
-      << demangle(expected_type_.name()) << "'";
-
-    what_ = s.str();
-    return what_.c_str();
-}
-
 void UnOpNode::validate() const { type(); }
 
 void UnOpNode::match_type(const std::type_index &arg, const std::type_index &type) const
 {
     if (arg != IdentifierType && arg != type)
-        throw InvalidTypeException(this->arg.get(), type);
+        throw InvalidTypeException(*this->arg, type);
 }
 
 std::type_index UnOpNode::type() const
@@ -76,7 +72,7 @@ std::type_index UnOpNode::type() const
         return typeid(bool);
     }
 
-    throw InvalidTypeException(this, IdentifierType);
+    throw InvalidTypeException(*this, IdentifierType);
 }
 
 void BinOpNode::validate() const { type(); }
@@ -85,10 +81,10 @@ void BinOpNode::match_types(const std::type_index &lhs, const std::type_index &r
                             const std::type_index &type) const
 {
     if (lhs != IdentifierType && lhs != type)
-        throw InvalidTypeException(this->lhs.get(), type);
+        throw InvalidTypeException(*this->lhs, type);
 
     if (rhs != IdentifierType && rhs != type)
-        throw InvalidTypeException(this->rhs.get(), type);
+        throw InvalidTypeException(*this->rhs, type);
 }
 
 std::type_index BinOpNode::type() const
@@ -132,13 +128,13 @@ std::type_index BinOpNode::type() const
     case BinOp::DOT:
     case BinOp::ARROW:
         if (lhs != IdentifierType)
-            throw InvalidTypeException(this, IdentifierType);
+            throw InvalidTypeException(*this, IdentifierType);
         if (rhs != FieldType)
-            throw InvalidTypeException(this, FieldType);
+            throw InvalidTypeException(*this, FieldType);
         return IdentifierType;
     }
 
-    throw InvalidTypeException(this, IdentifierType);
+    throw InvalidTypeException(*this, IdentifierType);
 }
 
 void StmtListNode::validate() const
@@ -153,11 +149,11 @@ std::type_index IdNode::type() const { return IdentifierType; }
 void ForNode::validate() const
 {
     if (filter->type() != typeid(bool))
-        throw InvalidTypeException(filter.get(), typeid(bool));
+        throw InvalidTypeException(*filter, typeid(bool));
 
     auto ctype = collection->type();
     if (ctype != IdentifierType && ctype != ListType)
-        throw InvalidTypeException(collection.get(), ListType);
+        throw InvalidTypeException(*collection, ListType);
 
     body->validate();
 }
@@ -178,7 +174,7 @@ std::type_index ListNode::type() const
     auto type = values.front()->type();
     for (const auto &value : values) {
         if (value->type() != type)
-            throw InvalidTypeException(value.get(), type);
+            throw InvalidTypeException(*value, type);
     }
 
     return ListType;
@@ -189,7 +185,7 @@ void IfNode::validate() const
     auto type = condition->type();
 
     if (type != typeid(bool) && type != IdentifierType)
-        throw InvalidTypeException(condition.get(), typeid(bool));
+        throw InvalidTypeException(*condition, typeid(bool));
 
     body->validate();
     elze->validate();

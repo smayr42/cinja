@@ -7,9 +7,9 @@ generation is very rudimentary.
 
 ## Example
 
-An example that shows how to use generated code to build a simple web
-application is provided in the [respective directory](example).  It depends on the
-[pion](https://github.com/splunk/pion) network library.
+An example that shows how the generated code can be used to build a simple web
+application is provided in the [respective directory](example). It depends on
+the [pion](https://github.com/splunk/pion) network library.
 
 Building and starting it on `localhost:8080`:
 ```

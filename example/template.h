@@ -98,8 +98,8 @@ namespace macros {
 	}
 }
 
-template<typename OS, typename N0, typename N1>
-void render_template(OS &o, N0 vsym_history, N1 vsym_users) {
+template<typename O, typename T0, typename T1>
+void render_template(O &o, T0 vsym_history, T1 vsym_users) {
 	o << u8R"content"""(<!DOCTYPE html>
 <html>
 <head>
